@@ -91,7 +91,7 @@ def parse_queries(source):
 
 def _make_query_fn(query):
     def inner(self, *args, **kwargs):
-        cursor = self.connection.cursor()
+        cursor = self.session or self.connection.cursor()
         result = cursor.execute(query.body, kwargs)
         if query.statement:
             return result
@@ -147,8 +147,9 @@ def parse_source(name, source):
     queries = parse_queries(source)
     obj = {k: _make_query_fn(v) for k, v in queries.items()}
 
-    def __init__(self, connection):
+    def __init__(self, connection=None, session=None):
         self.connection = connection
+        self.session = session
     obj['__init__'] = __init__
 
     return type(name, (), obj)
