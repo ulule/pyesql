@@ -95,6 +95,8 @@ def _make_query_fn(query):
         result = cursor.execute(query.body, kwargs)
         if query.statement:
             return result
+        elif self.session:
+            return result.fetchall()
         else:
             return cursor.fetchall()
     inner.__doc__ = query.doc
