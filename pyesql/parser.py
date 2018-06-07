@@ -94,6 +94,8 @@ def _make_query_fn(query):
         cursor = self.session or self.connection.cursor()
         result = cursor.execute(query.body, kwargs)
         if query.statement:
+            if self.session:
+                self.session.commit()
             return result
         elif self.session:
             return result.fetchall()
